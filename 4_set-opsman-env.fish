@@ -1,6 +1,6 @@
 #!/usr/bin/env fish
-set -x GCP_PROJECT_ID pa-syanagihara
-set -x GCP_RESOURCE_PREFIX pks
+set -x GCP_PROJECT_ID $PROJECT_ID
+set -x GCP_RESOURCE_PREFIX $ACCOUNT_NAME
 
 set -x DIRECTOR_VM_TYPE large.disk
 ### In the case of Public IP: true
