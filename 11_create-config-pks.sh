@@ -22,8 +22,8 @@ CERTIFICATES=$(om_generate_cert "*.sslip.io *.x.sslip.io")
 CERT_PEM=`echo $CERTIFICATES | jq -r '.certificate' | sed 's/^/        /'`
 KEY_PEM=`echo $CERTIFICATES | jq -r '.key' | sed 's/^/        /'`
 
-GCP_MASTER_SERVICE_ACCOUNT_KEY=$(cat terraforming-pks-gcp/terraform.tfstate | jq -r '.modules[0].outputs.pks_master_node_service_account_key.value' | sed 's/^/      /')
-GCP_WORKER_SERVICE_ACCOUNT_KEY=$(cat terraforming-pks-gcp/terraform.tfstate | jq -r '.modules[0].outputs.pks_worker_node_service_account_key.value' | sed 's/^/      /')
+GCP_MASTER_SERVICE_ACCOUNT_KEY=$(cat terraforming-pks-gcp/terraform.tfstate | jq -r '.modules[0].outputs.pks_master_node_service_account_key.value' | jq -r '.client_email')
+GCP_WORKER_SERVICE_ACCOUNT_KEY=$(cat terraforming-pks-gcp/terraform.tfstate | jq -r '.modules[0].outputs.pks_worker_node_service_account_key.value' | jq -r '.client_email')
 
 cat <<EOF > config-pks.yml
 ---
@@ -59,11 +59,9 @@ $KEY_PEM
   .properties.cloud_provider.gcp.network:
     value: $GCP_NETWORK
   .properties.cloud_provider.gcp.master_service_account:
-    value: |
-$GCP_MASTER_SERVICE_ACCOUNT_KEY
+    value: $GCP_MASTER_SERVICE_ACCOUNT_KEY
   .properties.cloud_provider.gcp.worker_service_account:
-    value: |
-$GCP_WORKER_SERVICE_ACCOUNT_KEY
+    value: $GCP_WORKER_SERVICE_ACCOUNT_KEY
   .properties.pks_api_hostname:
     value: $UAA_URL
   .properties.telemetry_selector:
